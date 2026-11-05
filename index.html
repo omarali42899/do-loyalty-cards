@@ -1,104 +1,439 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DO Coffee Club · Staff</title>
 <style>
-:root{font-family:Arial,sans-serif;color:#39291f;background:#f0e7d8}*{box-sizing:border-box}body{margin:0;padding:18px;min-height:100vh;display:flex;justify-content:center;align-items:flex-start}
+:root{font-family:Arial,sans-serif;color:#39291f;background:#f0e7d8}
+*{box-sizing:border-box}
+body{margin:0;padding:18px;min-height:100vh;display:flex;justify-content:center;align-items:flex-start}
 main{background:#faf6ee;border:1px solid #d6c2ac;border-radius:22px;padding:24px;width:min(100%,620px);margin:25px 0;box-shadow:0 10px 26px #39291f0b}
-small{letter-spacing:2.5px;color:#743f48;font-weight:700;font-size:12px}h1{font-size:clamp(30px,6vw,42px);margin:15px 0 20px}h2{font-size:21px;margin:12px 0}p{line-height:1.45}
-label{font-size:13px;font-weight:bold;display:block;margin-top:14px}input,button{font:inherit;padding:13px;border-radius:9px;min-height:44px}
+small{letter-spacing:2.5px;color:#743f48;font-weight:700;font-size:12px}
+h1{font-size:clamp(30px,6vw,42px);margin:15px 0 20px}
+h2{font-size:21px;margin:12px 0}
+p{line-height:1.45}
+label{font-size:13px;font-weight:bold;display:block;margin-top:14px}
+input,button{font:inherit;padding:13px;border-radius:9px;min-height:44px}
 input{width:100%;border:1px solid #c9b7a7;background:white;margin:6px 0}
-button{border:0;background:#39291f;color:#fff;cursor:pointer;margin:8px 0}button:disabled{opacity:.55;cursor:wait}
-button.alt{background:#743f48}button.light{background:transparent;border:1px solid #39291f;color:#39291f}
-.full{width:100%}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
-.panel{border-top:1px solid #d9cabc;margin-top:22px;padding-top:18px}.hidden{display:none!important}
+button{border:0;background:#39291f;color:#fff;cursor:pointer;margin:8px 0}
+button:disabled{opacity:.55;cursor:wait}
+button.alt{background:#743f48}
+button.light{background:transparent;border:1px solid #39291f;color:#39291f}
+.full{width:100%}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1}
+.panel{border-top:1px solid #d9cabc;margin-top:22px;padding-top:18px}
+.hidden{display:none!important}
 #status{min-height:22px;font-size:14px;overflow-wrap:anywhere;color:#743f48}
 #qr{background:white;padding:14px;display:inline-flex;align-items:center;justify-content:center;min-width:215px;min-height:215px}
-#qr img,#qr canvas{max-width:100%}#video{width:100%;max-height:260px;background:#221c18;border-radius:10px}
+#qr img,#qr canvas{max-width:100%}
+#reader{width:100%;max-width:100%;background:#fff;border-radius:10px;overflow:hidden}
+#reader video{width:100%!important;max-height:350px;object-fit:cover}
 .tag{display:inline-block;border:1px solid #743f48;color:#743f48;padding:5px 10px;border-radius:30px;font-size:12px}
-.note{color:#6f5d50;font-size:12px}.card{padding:14px;background:#f1e7da;border-radius:12px;margin:12px 0;overflow-wrap:anywhere}
-code{overflow-wrap:anywhere;font-size:12px} .stats{display:flex;gap:12px}.stats>div{flex:1;text-align:center;background:white;padding:12px;border-radius:12px}.stats strong{display:block;font-size:27px}
-</style></head><body><main>
-<small>DO SPECIALITY COFFEE</small><h1>DO Coffee Club.</h1>
+.note{color:#6f5d50;font-size:12px}
+.card{padding:14px;background:#f1e7da;border-radius:12px;margin:12px 0;overflow-wrap:anywhere}
+code{overflow-wrap:anywhere;font-size:12px}
+.stats{display:flex;gap:12px}
+.stats>div{flex:1;text-align:center;background:white;padding:12px;border-radius:12px}
+.stats strong{display:block;font-size:27px}
+</style>
+</head>
+<body>
+<main>
+<small>DO SPECIALITY COFFEE</small>
+<h1>DO Coffee Club.</h1>
 <p id="status" role="status">Checking secure session…</p>
-<section id="login" class="hidden"><h2>Staff sign in</h2><form id="loginForm">
+
+<section id="login" class="hidden">
+<h2>Staff sign in</h2>
+<form id="loginForm">
 <label>Email<input id="email" type="email" required autocomplete="email"></label>
 <label>Password<input id="password" type="password" required autocomplete="current-password"></label>
-<button class="full">Sign in</button></form></section>
-<section id="recover" class="hidden"><h2>Create your password</h2><form id="recoverForm">
-<label>New password<input id="recoveryPassword" type="password" minlength="8" required autocomplete="new-password"></label><button class="full">Save password</button></form></section>
-<section id="app" class="hidden">
-<div class="row"><span id="identity" class="note"></span><span id="role" class="tag"></span></div>
-<details><summary class="note" style="cursor:pointer;margin-top:10px">Change my password</summary><form id="changeForm">
-<label>New password<input id="changePassword" type="password" minlength="8" required autocomplete="new-password"></label>
-<button type="submit" class="alt">Update password</button></form></details>
-<section id="owner" class="panel hidden"><h2>Register customer · Owner only</h2>
-<p class="note">Pilot: add test customers only. Don't collect personal details beyond the name.</p>
-<form id="createForm"><label>Customer display name<input id="newName" maxlength="100" minlength="2" required placeholder="e.g. Test Customer"></label>
-<button type="submit" class="full">Create customer QR</button></form>
-<div id="created" class="card hidden"><b>Customer QR card</b><p id="createdName"></p><div id="qr"></div>
-<p class="note">Print or screenshot this card. Keep it private.</p><p><code id="createdCode"></code></p><button type="button" id="copyQr" class="light full">Copy QR code</button></div>
+<button class="full">Sign in</button>
+</form>
 </section>
-<section class="panel"><h2>Scan a customer card</h2>
-<div class="row"><button id="camera" class="alt" type="button">Start camera</button><button id="stopCamera" type="button" class="light">Stop camera</button></div>
-<video id="video" autoplay playsinline muted class="hidden"></video>
+
+<section id="recover" class="hidden">
+<h2>Create your password</h2>
+<form id="recoverForm">
+<label>New password<input id="recoveryPassword" type="password" minlength="8" required autocomplete="new-password"></label>
+<button class="full">Save password</button>
+</form>
+</section>
+
+<section id="app" class="hidden">
+<div class="row">
+<span id="identity" class="note"></span>
+<span id="role" class="tag"></span>
+</div>
+
+<details>
+<summary class="note" style="cursor:pointer;margin-top:10px">Change my password</summary>
+<form id="changeForm">
+<label>New password<input id="changePassword" type="password" minlength="8" required autocomplete="new-password"></label>
+<button type="submit" class="alt">Update password</button>
+</form>
+</details>
+
+<section id="owner" class="panel hidden">
+<h2>Register customer · Owner only</h2>
+<p class="note">Pilot: add test customers only. Don't collect personal details beyond the name.</p>
+<form id="createForm">
+<label>Customer display name<input id="newName" maxlength="100" minlength="2" required placeholder="e.g. Test Customer"></label>
+<button type="submit" class="full">Create customer QR</button>
+</form>
+<div id="created" class="card hidden">
+<b>Customer QR card</b>
+<p id="createdName"></p>
+<div id="qr"></div>
+<p class="note">Print or screenshot this card. Keep it private.</p>
+<p><code id="createdCode"></code></p>
+<button type="button" id="copyQr" class="light full">Copy QR code</button>
+</div>
+</section>
+
+<section class="panel">
+<h2>Scan a customer card</h2>
+<div class="row">
+<button id="camera" class="alt" type="button">Start camera</button>
+<button id="stopCamera" type="button" class="light">Stop camera</button>
+</div>
+
+<div id="reader" class="hidden"></div>
+
 <p class="note">Camera scanning requires a supported browser. Alternatively enter the card code below.</p>
-<form id="lookupForm"><label>Customer QR code<input id="qrInput" placeholder="DOCLUB:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required></label><button class="full" type="submit">Find customer</button></form>
-<div id="customer" class="card hidden"><h2 id="customerName"></h2><div class="stats"><div><strong id="progress">0/7</strong><span class="note">Stamps</span></div><div><strong id="rewards">0</strong><span class="note">Free coffees</span></div></div>
-<form id="awardForm"><label>Eligible coffees purchased<input id="qty" type="number" min="1" max="20" step="1" value="1" required></label><button class="full" type="submit">Add stamps</button></form>
+<form id="lookupForm">
+<label>Customer QR code
+<input id="qrInput" placeholder="DOCLUB:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required>
+</label>
+<button class="full" type="submit">Find customer</button>
+</form>
+
+<div id="customer" class="card hidden">
+<h2 id="customerName"></h2>
+<div class="stats">
+<div><strong id="progress">0/7</strong><span class="note">Stamps</span></div>
+<div><strong id="rewards">0</strong><span class="note">Free coffees</span></div>
+</div>
+<form id="awardForm">
+<label>Eligible coffees purchased
+<input id="qty" type="number" min="1" max="20" step="1" value="1" required>
+</label>
+<button class="full" type="submit">Add stamps</button>
+</form>
 <button id="redeem" type="button" class="alt full">Redeem one free coffee</button>
-</div></section>
+</div>
+</section>
+
 <button type="button" id="logout" class="light full">Sign out</button>
 <p class="note">Pilot use only. Verify each paid purchase before awarding stamps. 7 stamps = 1 free coffee.</p>
 </section>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script type="module">
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/+esm';
-const sb=createClient('https://ibzfjptgwwjodphliyeg.supabase.co','sb_publishable_J9-7_HwOBhFtDbcAquPkTA_f3vYmZcm');
+
+const sb=createClient(
+ 'https://ibzfjptgwwjodphliyeg.supabase.co',
+ 'sb_publishable_J9-7_HwOBhFtDbcAquPkTA_f3vYmZcm'
+);
+
 const $=id=>document.getElementById(id);
-let customer=null, staffRole=null, videoStream=null, scanning=false, recovery=location.hash.includes('type=recovery')||location.hash.includes('type=invite');
+let customer=null, staffRole=null, scanner=null, scanning=false;
+let recovery=location.hash.includes('type=recovery')||location.hash.includes('type=invite');
+
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function note(s){$('status').textContent=s}
 function toggle(id,on){$(id).classList.toggle('hidden',!on)}
-function codeOf(v){const s=String(v||'').trim();const q=s.startsWith('DOCLUB:')?s.slice(7):s;return uuid.test(q)?q:null}
-async function rpc(fn,args){const {data,error}=await sb.rpc(fn,args);if(error)throw new Error(error.message);return data}
+function codeOf(v){
+ const s=String(v||'').trim();
+ const q=s.startsWith('DOCLUB:')?s.slice(7):s;
+ return uuid.test(q)?q:null;
+}
+
+async function rpc(fn,args){
+ const {data,error}=await sb.rpc(fn,args);
+ if(error)throw new Error(error.message);
+ return data;
+}
+
 async function render(){
  const {data:{session}}=await sb.auth.getSession();
- if(!session){toggle('login',true);toggle('recover',false);toggle('app',false);note('Sign in to continue');return}
- if(recovery){toggle('login',false);toggle('recover',true);toggle('app',false);note('Set your password');return}
- try{staffRole=await rpc('do_staff_role',{});if(!['owner','barista'].includes(staffRole)){toggle('app',false);toggle('login',false);note('Account authenticated, but not authorized as staff.');return}}
- catch(e){toggle('app',false);note('Could not verify staff access: '+e.message);return}
- toggle('login',false);toggle('recover',false);toggle('app',true);toggle('owner',staffRole==='owner');
- $('identity').textContent=session.user.email||'Staff';$('role').textContent=staffRole;
+ if(!session){
+  toggle('login',true);
+  toggle('recover',false);
+  toggle('app',false);
+  note('Sign in to continue');
+  return;
+ }
+ if(recovery){
+  toggle('login',false);
+  toggle('recover',true);
+  toggle('app',false);
+  note('Set your password');
+  return;
+ }
+ try{
+  staffRole=await rpc('do_staff_role',{});
+  if(!['owner','barista'].includes(staffRole)){
+   toggle('app',false);
+   toggle('login',false);
+   note('Account authenticated, but not authorized as staff.');
+   return;
+  }
+ }catch(e){
+  toggle('app',false);
+  note('Could not verify staff access: '+e.message);
+  return;
+ }
+ toggle('login',false);
+ toggle('recover',false);
+ toggle('app',true);
+ toggle('owner',staffRole==='owner');
+ $('identity').textContent=session.user.email||'Staff';
+ $('role').textContent=staffRole;
  note('Staff session active · '+staffRole);
 }
-sb.auth.onAuthStateChange((evt)=>{if(evt==='PASSWORD_RECOVERY')recovery=true;setTimeout(render,0)});
-$('loginForm').onsubmit=async(e)=>{e.preventDefault();note('Signing in…');const{error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)note(error.message);else await render()};
-$('recoverForm').onsubmit=async(e)=>{e.preventDefault();const{error}=await sb.auth.updateUser({password:$('recoveryPassword').value});if(error)note(error.message);else{recovery=false;history.replaceState(null,'',location.pathname);note('Password saved');await render()}};
-$('changeForm').onsubmit=async(e)=>{e.preventDefault();const{error}=await sb.auth.updateUser({password:$('changePassword').value});note(error?'Password update failed: '+error.message:'Password updated successfully');if(!error)$('changeForm').reset()};
-$('logout').onclick=async()=>{stopCamera();await sb.auth.signOut();staffRole=null;customer=null;await render()};
-$('createForm').onsubmit=async(e)=>{e.preventDefault();note('Registering customer…');try{const data=await rpc('do_register_customer',{p_full_name:$('newName').value});toggle('created',true);$('createdName').textContent=data.name;$('createdCode').textContent='DOCLUB:'+data.qr_token;$('qr').replaceChildren();
-const script=window.QRCode;if(script)new script($('qr'),{text:'DOCLUB:'+data.qr_token,width:200,height:200,correctLevel:script.CorrectLevel.M});else $('qr').textContent='QR rendering unavailable. Use the code below.';
-note('Customer registered. Save or print the QR card now.');$('createForm').reset()}catch(err){note('Registration failed: '+err.message)}};
-$('copyQr').onclick=async()=>{try{await navigator.clipboard.writeText($('createdCode').textContent);note('Code copied')}catch{note('Select the code and copy manually')}};
-async function lookup(raw){const qr=codeOf(raw);if(!qr){note('Not a valid DO Coffee Club QR code');return}
-try{const data=await rpc('do_customer_by_qr',{p_qr:qr});if(!data){note('No customer found for this card');toggle('customer',false);return}
-customer=data;$('qrInput').value='DOCLUB:'+qr;showCustomer();note('Customer found')}catch(err){note('Lookup failed: '+err.message)}}
-function showCustomer(){toggle('customer',!!customer);if(!customer)return;$('customerName').textContent=customer.name;$('progress').textContent=customer.progress+'/7';$('rewards').textContent=customer.rewards_available;$('redeem').disabled=!customer.reward_id}
-$('lookupForm').onsubmit=async(e)=>{e.preventDefault();await lookup($('qrInput').value)};
-$('awardForm').onsubmit=async(e)=>{e.preventDefault();if(!customer)return;const n=Number($('qty').value);if(!Number.isInteger(n)||n<1||n>20){note('Quantity must be between 1 and 20');return}
-const b=$('awardForm').querySelector('button');b.disabled=true;
-try{const res=await rpc('do_award_stamps',{p_qr:customer.qr_token,p_order_reference:'DO-'+crypto.randomUUID(),p_quantity:n});note(res.already_processed?'Order already recorded':n+' stamps awarded');await lookup(customer.qr_token)}
-catch(err){note('Stamp update failed: '+err.message)}finally{b.disabled=false}};
-$('redeem').onclick=async()=>{if(!customer?.reward_id||!confirm('Redeem one free coffee for '+customer.name+'?'))return;
-try{const success=await rpc('do_redeem_reward',{p_qr:customer.qr_token,p_reward_id:customer.reward_id});note(success?'Free coffee redeemed':'Reward not available');await lookup(customer.qr_token)}
-catch(err){note('Redemption failed: '+err.message)}};
-async function startCamera(){if(!('BarcodeDetector' in window)){note('Camera QR detection is unsupported in this browser. Enter the code manually.');return}
-try{const supported=await BarcodeDetector.getSupportedFormats();if(!supported.includes('qr_code'))throw Error('QR scanning unsupported');
-videoStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});$('video').srcObject=videoStream;toggle('video',true);await $('video').play();scanning=true;note('Point camera at the DO Coffee Club QR card');const detector=new BarcodeDetector({formats:['qr_code']});
-async function frame(){if(!scanning)return;try{const codes=await detector.detect($('video'));if(codes.length){const raw=codes[0].rawValue;if(codeOf(raw)){stopCamera();await lookup(raw);return}}}catch{} if(scanning)setTimeout(frame,250)}frame()}
-catch(e){stopCamera();note('Camera unavailable: '+e.message+' · Enter code manually.')} }
-function stopCamera(){scanning=false;if(videoStream){videoStream.getTracks().forEach(t=>t.stop());videoStream=null}toggle('video',false)}
-$('camera').onclick=startCamera;$('stopCamera').onclick=stopCamera;
-const qrScript=document.createElement('script');qrScript.src='https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';document.head.appendChild(qrScript);
+
+sb.auth.onAuthStateChange((evt)=>{
+ if(evt==='PASSWORD_RECOVERY')recovery=true;
+ setTimeout(render,0);
+});
+
+$('loginForm').onsubmit=async(e)=>{
+ e.preventDefault();
+ note('Signing in…');
+ const{error}=await sb.auth.signInWithPassword({
+  email:$('email').value.trim(),
+  password:$('password').value
+ });
+ if(error)note(error.message);
+ else await render();
+};
+
+$('recoverForm').onsubmit=async(e)=>{
+ e.preventDefault();
+ const{error}=await sb.auth.updateUser({password:$('recoveryPassword').value});
+ if(error)note(error.message);
+ else{
+  recovery=false;
+  history.replaceState(null,'',location.pathname);
+  note('Password saved');
+  await render();
+ }
+};
+
+$('changeForm').onsubmit=async(e)=>{
+ e.preventDefault();
+ const{error}=await sb.auth.updateUser({password:$('changePassword').value});
+ note(error?'Password update failed: '+error.message:'Password updated successfully');
+ if(!error)$('changeForm').reset();
+};
+
+$('logout').onclick=async()=>{
+ await stopCamera(true);
+ await sb.auth.signOut();
+ staffRole=null;
+ customer=null;
+ await render();
+};
+
+$('createForm').onsubmit=async(e)=>{
+ e.preventDefault();
+ note('Registering customer…');
+ try{
+  const data=await rpc('do_register_customer',{p_full_name:$('newName').value});
+  toggle('created',true);
+  $('createdName').textContent=data.name;
+  $('createdCode').textContent='DOCLUB:'+data.qr_token;
+  $('qr').replaceChildren();
+  const script=window.QRCode;
+  if(script){
+   new script($('qr'),{
+    text:'DOCLUB:'+data.qr_token,
+    width:200,
+    height:200,
+    correctLevel:script.CorrectLevel.M
+   });
+  }else{
+   $('qr').textContent='QR rendering unavailable. Use the code below.';
+  }
+  note('Customer registered. Save or print the QR card now.');
+  $('createForm').reset();
+ }catch(err){
+  note('Registration failed: '+err.message);
+ }
+};
+
+$('copyQr').onclick=async()=>{
+ try{
+  await navigator.clipboard.writeText($('createdCode').textContent);
+  note('Code copied');
+ }catch{
+  note('Select the code and copy manually');
+ }
+};
+
+async function lookup(raw){
+ const qr=codeOf(raw);
+ if(!qr){
+  note('Not a valid DO Coffee Club QR code');
+  return;
+ }
+ try{
+  const data=await rpc('do_customer_by_qr',{p_qr:qr});
+  if(!data){
+   note('No customer found for this card');
+   toggle('customer',false);
+   return;
+  }
+  customer=data;
+  $('qrInput').value='DOCLUB:'+qr;
+  showCustomer();
+  note('Customer found');
+ }catch(err){
+  note('Lookup failed: '+err.message);
+ }
+}
+
+function showCustomer(){
+ toggle('customer',!!customer);
+ if(!customer)return;
+ $('customerName').textContent=customer.name;
+ $('progress').textContent=customer.progress+'/7';
+ $('rewards').textContent=customer.rewards_available;
+ $('redeem').disabled=!customer.reward_id;
+}
+
+$('lookupForm').onsubmit=async(e)=>{
+ e.preventDefault();
+ await lookup($('qrInput').value);
+};
+
+$('awardForm').onsubmit=async(e)=>{
+ e.preventDefault();
+ if(!customer)return;
+ const n=Number($('qty').value);
+ if(!Number.isInteger(n)||n<1||n>20){
+  note('Quantity must be between 1 and 20');
+  return;
+ }
+ const b=$('awardForm').querySelector('button');
+ b.disabled=true;
+ try{
+  const res=await rpc('do_award_stamps',{
+   p_qr:customer.qr_token,
+   p_order_reference:'DO-'+crypto.randomUUID(),
+   p_quantity:n
+  });
+  note(res.already_processed?'Order already recorded':n+' stamps awarded');
+  await lookup(customer.qr_token);
+ }catch(err){
+  note('Stamp update failed: '+err.message);
+ }finally{
+  b.disabled=false;
+ }
+};
+
+$('redeem').onclick=async()=>{
+ if(!customer?.reward_id||!confirm('Redeem one free coffee for '+customer.name+'?'))return;
+ try{
+  const success=await rpc('do_redeem_reward',{
+   p_qr:customer.qr_token,
+   p_reward_id:customer.reward_id
+  });
+  note(success?'Free coffee redeemed':'Reward not available');
+  await lookup(customer.qr_token);
+ }catch(err){
+  note('Redemption failed: '+err.message);
+ }
+};
+
+// iPhone-compatible scanner
+async function startCamera(){
+ if(scanning)return;
+
+ if(!window.isSecureContext){
+  note('Camera requires HTTPS. Open the secure DO Coffee Club site.');
+  return;
+ }
+
+ if(!window.Html5Qrcode){
+  note('QR scanner library did not load. Check your internet connection and reload.');
+  return;
+ }
+
+ scanning=true;
+ $('camera').disabled=true;
+ toggle('reader',true);
+ note('Requesting camera permission…');
+
+ try{
+  scanner=new window.Html5Qrcode('reader',{
+   formatsToSupport:[window.Html5QrcodeSupportedFormats.QR_CODE],
+   verbose:false
+  });
+
+  await scanner.start(
+   {facingMode:'environment'},
+   {
+    fps:10,
+    qrbox:(w,h)=>{
+     const n=Math.max(130,Math.min(w,h,260));
+     return{width:n,height:n};
+    }
+   },
+   async(decoded)=>{
+    if(!scanning||!codeOf(decoded))return;
+    note('Customer QR detected');
+    await stopCamera();
+    await lookup(decoded);
+   },
+   ()=>{}
+  );
+
+  note('Camera ready. Point it at a DO Coffee Club QR code.');
+ }catch(err){
+  note('Camera unavailable: '+(err?.message||String(err))+'. Check Safari camera permission, or paste the code below.');
+  await stopCamera(true);
+ }
+}
+
+async function stopCamera(keepStatus=false){
+ scanning=false;
+ const active=scanner;
+ scanner=null;
+
+ if(active){
+  try{
+   if(active.isScanning)await active.stop();
+  }catch(e){
+   console.warn('Camera stop:',e);
+  }
+  try{
+   active.clear();
+  }catch(e){
+   console.warn('Camera clear:',e);
+  }
+ }
+
+ toggle('reader',false);
+ $('camera').disabled=false;
+ if(!keepStatus)note('Camera stopped.');
+}
+
+$('camera').onclick=startCamera;
+$('stopCamera').onclick=stopCamera;
+
+const qrScript=document.createElement('script');
+qrScript.src='https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+document.head.appendChild(qrScript);
+
 render();
-</script></body></html>
+</script>
+</body>
+</html>
