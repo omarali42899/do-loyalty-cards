@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DO Coffee Club</title><style>
+body{margin:0;background:#f0e7d8;color:#39291f;font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center}
+main{background:#faf6ee;border:1px solid #d5c1ab;border-radius:20px;padding:35px;max-width:430px;width:85%}
+h1{font-size:40px}small{letter-spacing:3px;color:#743f48;font-weight:bold}
+input,button{display:block;width:100%;box-sizing:border-box;padding:13px;margin:12px 0;border-radius:8px;font-size:16px}
+input{border:1px solid #c6b7a7}button{background:#39291f;color:white;border:0;cursor:pointer}
+#setup,#inside,#logout{display:none}#status{overflow-wrap:anywhere}
+</style></head><body><main><small>DO SPECIALITY COFFEE</small><h1>DO Coffee Club.</h1>
+<p id="status">Checking session…</p>
+<form id="login"><input id="email" type="email" placeholder="Email" required autocomplete="email">
+<input id="password" type="password" placeholder="Password" required autocomplete="current-password">
+<button>Sign in</button></form>
+<form id="setup"><p>Create your account password or reset your existing password.</p><input id="newpass" type="password" placeholder="New password (8+ characters)" minlength="8" required autocomplete="new-password"><button>Save password</button></form>
+<div id="inside"><h2>Welcome!</h2><p id="who"></p><p>This is a login preview. QR scanning, stamps and owner reports are not active yet.</p></div>
+<button id="logout">Sign out</button><p style="font-size:12px">Private staff preview. No customer data entry yet.</p></main>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://ibzfjptgwwjodphliyeg.supabase.co','sb_publishable_J9-7_HwOBhFtDbcAquPkTA_f3vYmZcm');
+const el=id=>document.getElementById(id);
+let invited=location.hash.includes('type=invite') || location.hash.includes('type=recovery') || location.search.includes('type=recovery') || location.search.includes('type=invite');
+function show(name){for(let n of ['login','setup','inside'])el(n).style.display=n===name?'block':'none';el('logout').style.display=name==='inside'?'block':'none'}
+async function refresh(){let {data:{session}}=await db.auth.getSession();if(!session){show('login');el('status').textContent='Staff sign in';return}if(invited){show('setup');el('status').textContent='Set your password';return}show('inside');el('who').textContent=session.user.email;el('status').textContent='Signed in securely'}
+db.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY')invited=true;setTimeout(refresh,0)});
+el('login').onsubmit=async e=>{e.preventDefault();el('status').textContent='Signing in…';let {error}=await db.auth.signInWithPassword({email:el('email').value,password:el('password').value});if(error)el('status').textContent=error.message;else refresh()};
+el('setup').onsubmit=async e=>{e.preventDefault();let {error}=await db.auth.updateUser({password:el('newpass').value});if(error)el('status').textContent=error.message;else{invited=false;history.replaceState(null,'',location.pathname);refresh()}};
+el('logout').onclick=async()=>{await db.auth.signOut();refresh()};
+refresh();
+</script></body></html>
