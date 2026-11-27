@@ -1,0 +1,105 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DO Coffee Club · Wallet Sync Test</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#39291f;background:#f0e7d8}
+*{box-sizing:border-box}
+body{margin:0;padding:25px;display:flex;justify-content:center}
+main{width:min(100%,560px);padding:30px;border:1px solid #d5c1ab;border-radius:24px;background:#faf6ee}
+h1{margin:14px 0 4px;font-size:36px}
+small{letter-spacing:2px;color:#743f48;font-weight:700}
+p{line-height:1.5}
+input,button{font-size:16px;width:100%;padding:14px;border-radius:9px;margin-top:12px}
+input{border:1px solid #c9b7a7}
+button{background:#39291f;color:white;border:0;cursor:pointer}
+button:disabled{opacity:.6}
+#result{white-space:pre-wrap;overflow-wrap:anywhere;color:#743f48;font-size:14px;background:#f0e7d8;border-radius:9px;padding:12px;margin-top:16px}
+</style>
+</head>
+<body>
+<main>
+<small>DO SPECIALITY COFFEE</small>
+<h1>Google Wallet sync test</h1>
+<p>Owner/staff-only pilot. This updates the stamp balance on an already saved Google Wallet card. It does not add stamps or redeem rewards.</p>
+<p id="who">Checking login…</p>
+
+<label for="code">Customer card QR code (UUID or DOCLUB:UUID)</label>
+<input id="code" autocomplete="off" placeholder="DOCLUB:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+
+<button id="run">Sync this card to Google Wallet</button>
+<div id="result" role="status">Enter your existing test customer's QR code.</div>
+<p style="font-size:12px">Google Wallet may need a refresh to show updated points. This page does not change the Supabase stamp balance.</p>
+</main>
+
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/+esm';
+
+const sb=createClient(
+  'https://ibzfjptgwwjodphliyeg.supabase.co',
+  'sb_publishable_J9-7_HwOBhFtDbcAquPkTA_f3vYmZcm'
+);
+
+const $=x=>document.getElementById(x);
+const pat=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function show(){
+  const {data:{session}}=await sb.auth.getSession();
+  $('who').textContent=session
+    ? 'Signed in: '+session.user.email
+    : 'Please sign in at the main DO Coffee Club page, then return here.';
+}
+
+$('run').onclick=async()=>{
+  const raw=$('code').value.trim();
+  const qr=raw.replace(/^DOCLUB:/i,'');
+
+  if(!pat.test(qr)){
+    $('result').textContent='Enter a valid UUID from your existing test card.';
+    return;
+  }
+
+  const {data:{session}}=await sb.auth.getSession();
+
+  if(!session){
+    $('result').textContent='Please sign in on the main DO Coffee Club page first.';
+    return;
+  }
+
+  $('run').disabled=true;
+  $('result').textContent='Contacting Google Wallet…';
+
+  try{
+    const response=await fetch(
+      'https://ibzfjptgwwjodphliyeg.supabase.co/functions/v1/do-wallet-sync',
+      {
+        method:'POST',
+        headers:{
+          'content-type':'application/json',
+          'Authorization':'Bearer '+session.access_token,
+          'apikey':'sb_publishable_J9-7_HwOBhFtDbcAquPkTA_f3vYmZcm'
+        },
+        body:JSON.stringify({qr_token:qr})
+      }
+    );
+
+    const body=await response.json();
+
+    $('result').textContent=body.synced
+      ? 'Google Wallet updated! Stamps: '+body.progress+' / 7. Open the saved card and refresh.'
+      : 'HTTP '+response.status+' · '+(body.error||body.reason||'Wallet update unavailable');
+
+  }catch(e){
+    $('result').textContent='Connection failed: '+e.message;
+  }finally{
+    $('run').disabled=false;
+  }
+};
+
+show();
+</script>
+</body>
+</html>
